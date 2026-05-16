@@ -1,0 +1,35 @@
+{
+  "total_clips": 1582,
+  "train": 1104,
+  "val": 236,
+  "test": 242,
+  "meets_l7_min_50": true,
+  "classes_requested": [
+    "Biking",
+    "Diving",
+    "GolfSwing",
+    "HighJump",
+    "HorseRiding",
+    "PullUps",
+    "SkateBoarding",
+    "Swing",
+    "ThrowDiscus",
+    "VolleyballSpiking",
+    "WalkingWithDog",
+    "WritingOnBoard"
+  ],
+  "classes_with_data": [
+    "Biking",
+    "Diving",
+    "GolfSwing",
+    "HighJump",
+    "HorseRiding",
+    "PullUps",
+    "SkateBoarding",
+    "Swing",
+    "ThrowDiscus",
+    "VolleyballSpiking",
+    "WalkingWithDog",
+    "WritingOnBoard"
+  ]
+}

@@ -1,0 +1,23 @@
+project:
+  type: default
+  render:
+    - index.qmd
+    - 00_wymagania_z_pdf.qmd
+    - 01_konfiguracja_dane.qmd
+    - lab_L1_awizycja.qmd
+    - lab_L2_filtry.qmd
+    - lab_L3_segmentacja.qmd
+    - lab_L4_cechy.qmd
+    - lab_L5_cnn.qmd
+    - lab_L6_optymalizacja.qmd
+    - lab_L7_wideo.qmd
+    - 98_potok_run_all_python.qmd
+    - l05_zalacznik_torchem_R.qmd
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    lang: pl
+
+lang: pl

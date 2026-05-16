@@ -1,0 +1,219 @@
+{
+  "video_top1": 0.9586776859504132,
+  "video_top5": 1.0,
+  "frame_top1": 0.9338842975206612,
+  "frame_top5": 0.9917355371900827,
+  "num_test_clips": 242,
+  "video_train_history": [
+    {
+      "epoch": 1,
+      "train_loss_mean": 1.2504705261655045
+    },
+    {
+      "epoch": 2,
+      "train_loss_mean": 0.39032270732349245
+    },
+    {
+      "epoch": 3,
+      "train_loss_mean": 0.19156634087498853
+    },
+    {
+      "epoch": 4,
+      "train_loss_mean": 0.16643403643958163
+    },
+    {
+      "epoch": 5,
+      "train_loss_mean": 0.11495958862529285
+    },
+    {
+      "epoch": 6,
+      "train_loss_mean": 0.07546607588343593
+    },
+    {
+      "epoch": 7,
+      "train_loss_mean": 0.12076588363244968
+    },
+    {
+      "epoch": 8,
+      "train_loss_mean": 0.06108089188194793
+    },
+    {
+      "epoch": 9,
+      "train_loss_mean": 0.058206150525053825
+    },
+    {
+      "epoch": 10,
+      "train_loss_mean": 0.06082806144115529
+    },
+    {
+      "epoch": 11,
+      "train_loss_mean": 0.09942672545582974
+    },
+    {
+      "epoch": 12,
+      "train_loss_mean": 0.07295018035844239
+    }
+  ],
+  "frame_train_history": [
+    {
+      "epoch": 1,
+      "train_loss_mean": 1.0285608368939247
+    },
+    {
+      "epoch": 2,
+      "train_loss_mean": 0.19233124578992525
+    },
+    {
+      "epoch": 3,
+      "train_loss_mean": 0.09180767262570452
+    },
+    {
+      "epoch": 4,
+      "train_loss_mean": 0.054262255912349705
+    },
+    {
+      "epoch": 5,
+      "train_loss_mean": 0.05569661880229208
+    },
+    {
+      "epoch": 6,
+      "train_loss_mean": 0.037127832536234695
+    }
+  ],
+  "sample_errors_video": [
+    {
+      "clip_index": 81,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\HighJump\\v_HighJump_g03_c03.avi",
+      "y_true": 3,
+      "y_pred": 8
+    },
+    {
+      "clip_index": 92,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\HorseRiding\\v_HorseRiding_g24_c02.avi",
+      "y_true": 4,
+      "y_pred": 0
+    },
+    {
+      "clip_index": 102,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\HorseRiding\\v_HorseRiding_g22_c04.avi",
+      "y_true": 4,
+      "y_pred": 9
+    },
+    {
+      "clip_index": 125,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g14_c04.avi",
+      "y_true": 6,
+      "y_pred": 0
+    },
+    {
+      "clip_index": 128,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g23_c04.avi",
+      "y_true": 6,
+      "y_pred": 0
+    },
+    {
+      "clip_index": 141,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g14_c01.avi",
+      "y_true": 6,
+      "y_pred": 0
+    },
+    {
+      "clip_index": 173,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\ThrowDiscus\\v_ThrowDiscus_g11_c04.avi",
+      "y_true": 8,
+      "y_pred": 7
+    },
+    {
+      "clip_index": 181,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\ThrowDiscus\\v_ThrowDiscus_g22_c03.avi",
+      "y_true": 8,
+      "y_pred": 2
+    },
+    {
+      "clip_index": 205,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\WalkingWithDog\\v_WalkingWithDog_g25_c04.avi",
+      "y_true": 10,
+      "y_pred": 7
+    },
+    {
+      "clip_index": 214,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\WalkingWithDog\\v_WalkingWithDog_g04_c04.avi",
+      "y_true": 10,
+      "y_pred": 0
+    }
+  ],
+  "sample_errors_frame": [
+    {
+      "clip_index": 4,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\Biking\\v_Biking_g23_c04.avi",
+      "y_true": 0,
+      "y_pred": 10
+    },
+    {
+      "clip_index": 10,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\Biking\\v_Biking_g13_c06.avi",
+      "y_true": 0,
+      "y_pred": 1
+    },
+    {
+      "clip_index": 37,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\Diving\\v_Diving_g23_c03.avi",
+      "y_true": 1,
+      "y_pred": 7
+    },
+    {
+      "clip_index": 98,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\HorseRiding\\v_HorseRiding_g08_c05.avi",
+      "y_true": 4,
+      "y_pred": 7
+    },
+    {
+      "clip_index": 105,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\HorseRiding\\v_HorseRiding_g23_c02.avi",
+      "y_true": 4,
+      "y_pred": 2
+    },
+    {
+      "clip_index": 125,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g14_c04.avi",
+      "y_true": 6,
+      "y_pred": 0
+    },
+    {
+      "clip_index": 126,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g01_c02.avi",
+      "y_true": 6,
+      "y_pred": 10
+    },
+    {
+      "clip_index": 128,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g23_c04.avi",
+      "y_true": 6,
+      "y_pred": 10
+    },
+    {
+      "clip_index": 141,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\SkateBoarding\\v_SkateBoarding_g14_c01.avi",
+      "y_true": 6,
+      "y_pred": 3
+    },
+    {
+      "clip_index": 173,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\ThrowDiscus\\v_ThrowDiscus_g11_c04.avi",
+      "y_true": 8,
+      "y_pred": 7
+    },
+    {
+      "clip_index": 181,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\ThrowDiscus\\v_ThrowDiscus_g22_c03.avi",
+      "y_true": 8,
+      "y_pred": 2
+    },
+    {
+      "clip_index": 201,
+      "path": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\data\\raw\\UCF-101\\WalkingWithDog\\v_WalkingWithDog_g21_c01.avi",
+      "y_true": 10,
+      "y_pred": 4
+    }
+  ]
+}

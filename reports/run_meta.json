@@ -1,0 +1,16 @@
+{
+  "started_utc": "20260501_175209Z",
+  "python": "3.13.12",
+  "repo_root": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu",
+  "artifact_workspace": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu",
+  "git_head": "fcdad37dce388a7409b8cd79ece979516a38e9f2",
+  "modules": [
+    "aaop.lab01_acquisition.run",
+    "aaop.lab02_filters.run",
+    "aaop.lab03_segmentation.run",
+    "aaop.lab04_features.run",
+    "aaop.lab05_cnn.run",
+    "aaop.lab06_optimization.run",
+    "aaop.lab07_video.run"
+  ]
+}

@@ -1,0 +1,10 @@
+---
+title: "L7 — klasyfikacja wideo (PDF grupa 3)"
+format: html
+---
+
+Wymóg PDF: ≥50 klipów, architektura wideo vs baseline pojedynczej klatki, top-1 / top-5, analiza błędów.
+
+``` bash
+bash scripts/run_aaop_lab.sh lab07_video
+```

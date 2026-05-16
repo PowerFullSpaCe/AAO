@@ -1,0 +1,12 @@
+---
+title: "L5 — CNN wg PDF (PyTorch w projekcie)"
+format: html
+---
+
+**Oficjalne spełnienie L5** (augmentacja, BNNR z `configs/experiment.yaml`, metryki, confusion, krzywe): `aaop.lab05_cnn`.
+
+``` bash
+bash scripts/run_aaop_lab.sh lab05_cnn
+```
+
+Opcjonalny eksperyment w samym R: `l05_zalacznik_torchem_R.qmd` (`params.run`, nie zastępuje wymagań augmentacji z PDF).

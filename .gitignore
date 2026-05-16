@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+# zbyt duże pliki z projektu
+data/raw/UCF-101/
 # Distribution / packaging
 .Python
 build/

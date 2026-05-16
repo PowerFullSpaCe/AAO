@@ -1,0 +1,16 @@
+top-1 (wideo LSTM): 0.9587
+top-5 (wideo LSTM): 1.0000
+Przykładowe pomyłki (ścieżka, y_true, y_pred):
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\HighJump\v_HighJump_g03_c03.avi true=3 pred=8
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\HorseRiding\v_HorseRiding_g24_c02.avi true=4 pred=0
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\HorseRiding\v_HorseRiding_g22_c04.avi true=4 pred=9
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\SkateBoarding\v_SkateBoarding_g14_c04.avi true=6 pred=0
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\SkateBoarding\v_SkateBoarding_g23_c04.avi true=6 pred=0
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\SkateBoarding\v_SkateBoarding_g14_c01.avi true=6 pred=0
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\ThrowDiscus\v_ThrowDiscus_g11_c04.avi true=8 pred=7
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\ThrowDiscus\v_ThrowDiscus_g22_c03.avi true=8 pred=2
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\WalkingWithDog\v_WalkingWithDog_g25_c04.avi true=10 pred=7
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\data\raw\UCF-101\WalkingWithDog\v_WalkingWithDog_g04_c04.avi true=10 pred=0
+
+top-1 (baseline klatka): 0.9339
+top-5 (baseline klatka): 0.9917

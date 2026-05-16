@@ -1,0 +1,20 @@
+---
+title: "L1 — akwizycja i dyskretyzacja (PDF grupa 3)"
+format: html
+---
+
+Uruchamia ten sam kod co `python -m aaop.lab01_acquisition.run` (`src/aaop/lab01_acquisition/run.py`).
+
+Wygeneruje m.in.: `l1_przestrzenie.png`, `l1_histogram_przed_po.png`.
+
+Z katalogu **`r_mirror`**:
+
+``` bash
+bash scripts/run_aaop_lab.sh lab01_acquisition
+```
+
+Z korzenia projektu:
+
+``` bash
+bash r_mirror/scripts/run_aaop_lab.sh lab01_acquisition
+```

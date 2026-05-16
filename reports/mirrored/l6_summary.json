@@ -1,0 +1,15 @@
+{
+  "small_cnn": {
+    "final_val_loss": 1.869954652705435
+  },
+  "resnet": {
+    "final_val_loss": 0.15953581540261286,
+    "gradcam": "C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\reports\\figury\\l6_gradcam.png"
+  },
+  "mean_iou_val_sample": 0.5070577510553649,
+  "bnnr_installed": true,
+  "lr_sweep_final_val_loss": {
+    "lr_0.01": 2.3973221334360413,
+    "lr_0.001": 2.057636545876325
+  }
+}

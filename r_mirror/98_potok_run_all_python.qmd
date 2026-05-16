@@ -1,0 +1,12 @@
+---
+title: "Cały pipeline — `scripts/run_all_labs.py`"
+format: html
+---
+
+Tak jak w **`README.md`**: jeden przebieg L1–L7 z korzenia projektu (po `pip install -e .` i danych).
+
+``` bash
+cd ..   # z r_mirror przejdź do korzenia projektu; lub użyj pełnej ścieżki
+export PYTHONPATH="${PWD}/src"
+python3 scripts/run_all_labs.py
+```

@@ -1,0 +1,10 @@
+{
+  "accuracy": 0.5702479338842975,
+  "precision_macro": 0.6376766625552471,
+  "recall_macro": 0.5559059181770852,
+  "f1_macro": 0.562320415572088,
+  "epochs": 25,
+  "device": "cuda",
+  "bnnr_installed": true,
+  "bnnr_preset": "light"
+}

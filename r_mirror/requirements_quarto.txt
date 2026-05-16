@@ -1,0 +1,9 @@
+# Minimalne zależności oprócz głównego projektu Python (pyproject/requirements pip).
+#
+# Dokumentacja R dla manifestu próbek — `01_konfiguracja_dane.qmd`:
+#   yaml, jsonlite, knitr
+#
+# Opcjonalny załącznik L5 wyłącznie w pakiecie torch (l05_zalacznik_torchem_R.qmd, params.run: true):
+#   torch, ggplot2, magick
+#
+Quarto instaluje osobno: https://quarto.org/

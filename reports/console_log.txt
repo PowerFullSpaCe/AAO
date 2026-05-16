@@ -1,0 +1,55 @@
+python scripts/run_all_labs.py 
+AAOP_RUN_DIR=C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\runs\20260501_175209Z
+artifact_workspace=C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu
+=== aaop.lab01_acquisition.run ===
+L1 zapisano do C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\figury
+=== aaop.lab02_filters.run ===
+L2 zapisano do C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\figury
+=== aaop.lab03_segmentation.run ===
+L3 zapisano C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\figury\l3_tabela_pomiarow.csv wierszy: 12
+=== aaop.lab04_features.run ===
+  feature_set classifier  accuracy_test
+0    hog_only    SVM_RBF       0.933333
+1    hog_only     kNN_k5       0.855556
+2    lbp_only    SVM_RBF       0.900000
+3    lbp_only     kNN_k5       0.877778
+4     hog_lbp    SVM_RBF       0.933333
+5     hog_lbp     kNN_k5       0.866667
+=== aaop.lab05_cnn.run ===
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\src\aaop\lab05_cnn\run.py:101: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:837.)
+  tl += float(loss) * x.size(0)
+ep 1/25 tr_loss 2.2612 val_loss 2.1158 tr_acc 0.252 val_acc 0.288
+ep 5/25 tr_loss 1.8734 val_loss 1.7604 tr_acc 0.399 val_acc 0.394
+ep 10/25 tr_loss 1.5950 val_loss 1.5433 tr_acc 0.487 val_acc 0.538
+ep 15/25 tr_loss 1.4446 val_loss 1.4002 tr_acc 0.534 val_acc 0.559
+ep 20/25 tr_loss 1.3078 val_loss 1.2080 tr_acc 0.582 val_acc 0.614
+ep 25/25 tr_loss 1.1898 val_loss 1.2386 tr_acc 0.602 val_acc 0.597
+L5 test: {'accuracy': 0.5702479338842975, 'precision_macro': 0.6376766625552471, 'recall_macro': 0.5559059181770852, 'f1_macro': 0.562320415572088, 'epochs': 25, 'device': 'cuda', 'bnnr_installed': True, 'bnnr_preset': 'light'}
+=== aaop.lab06_optimization.run ===
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\src\aaop\lab06_optimization\run.py:58: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:837.)
+  tl += float(loss) * x.size(0)
+{'small_cnn': {'final_val_loss': 1.869954652705435}, 'resnet': {'final_val_loss': 0.15953581540261286, 'gradcam': 'C:\\Users\\morem\\Repositories\\roboczy_projekt_z_analizy_obrazu\\reports\\figury\\l6_gradcam.png'}, 'mean_iou_val_sample': 0.5070577510553649, 'bnnr_installed': True, 'lr_sweep_final_val_loss': {'lr_0.01': 2.3973221334360413, 'lr_0.001': 2.057636545876325}}
+=== aaop.lab07_video.run ===
+C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\src\aaop\lab07_video\run.py:107: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:837.)
+  tot += float(loss) * y.size(0)
+L7 wideo ep 1/12 loss 1.2505
+L7 wideo ep 2/12 loss 0.3903
+L7 wideo ep 3/12 loss 0.1916
+L7 wideo ep 4/12 loss 0.1664
+L7 wideo ep 5/12 loss 0.1150
+L7 wideo ep 6/12 loss 0.0755
+L7 wideo ep 7/12 loss 0.1208
+L7 wideo ep 8/12 loss 0.0611
+L7 wideo ep 9/12 loss 0.0582
+L7 wideo ep 10/12 loss 0.0608
+L7 wideo ep 11/12 loss 0.0994
+L7 wideo ep 12/12 loss 0.0730
+L7 zapisano C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\figury\l7_json.json
+Wszystkie etapy zakończone.
+Log konsoli: C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\runs\20260501_175209Z\pipeline_console.log
+Metadane: C:\Users\morem\Repositories\roboczy_projekt_z_analizy_obrazu\reports\runs\20260501_175209Z\run_meta.json
+
+

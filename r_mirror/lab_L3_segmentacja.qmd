@@ -1,0 +1,10 @@
+---
+title: "L3 — segmentacja i pomiary (PDF grupa 3)"
+format: html
+---
+
+Wymóg PDF: segmentacja (progowanie, watershed lub kontury), pomiary, tabela ≥10 obiektów, wizualizacja.
+
+``` bash
+bash scripts/run_aaop_lab.sh lab03_segmentation
+```

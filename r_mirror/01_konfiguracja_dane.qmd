@@ -1,0 +1,105 @@
+---
+title: "Konfiguracja eksperymentu i lista probek (manifest R)"
+subtitle: "`configs/experiment.yaml` — zgodnie z PDF: podzial 70/15/15 w `prepare_dataset`; klatki w `frames.jpg_dir`"
+format: html
+---
+
+Analog `aaop.config.load_experiment()` oraz lista probek jak w `collect_first_frame_per_video()` (**`lab05_cnn/dataset.py`**).
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+required <- c("yaml", "jsonlite")
+missing <- required[!vapply(required, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing)) {
+  stop("Zainstaluj pakiety: ", paste(missing, collapse = ", "))
+}
+`%||%` <- function(x, y) if (is.null(x) || identical(x, "")) y else x
+```
+
+```{r}
+#| label: paths-and-yaml
+repo_root <- normalizePath("..", mustWork = TRUE)
+cfg_path <- file.path(repo_root, "configs", "experiment.yaml")
+cfg <- yaml::read_yaml(cfg_path)
+
+art_root <- Sys.getenv("AAOP_ARTIFACT_ROOT", unset = "")
+base_dir <- if (nzchar(art_root)) normalizePath(art_root, mustWork = FALSE) else repo_root
+if (!dir.exists(base_dir)) dir.create(base_dir, recursive = TRUE)
+
+reports_rel <- cfg$paths$reports_dir %||% "reports"
+models_rel <- cfg$paths$models_dir %||% "models"
+fig_dir <- file.path(base_dir, reports_rel, "figury")
+model_dir <- file.path(base_dir, models_rel)
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(model_dir, recursive = TRUE, showWarnings = FALSE)
+
+frames_root <- file.path(repo_root, cfg$frames$jpg_dir)
+list(
+  repo_root = repo_root,
+  frames_root = frames_root,
+  fig_dir = fig_dir,
+  model_dir = model_dir,
+  seed = cfg$seed %||% 42L,
+  l5_batch = cfg$l5_cnn$batch_size %||% 16L,
+  l5_epochs = cfg$l5_cnn$epochs %||% 15L,
+  l5_lr = cfg$l5_cnn$lr %||% 1e-3
+)
+```
+
+Po jednej klatce na folder wideo (`train` / `val` / `test`), etykiety jak kolejnosc sortowanych klas:
+
+```{r}
+#| label: collect-frames
+collect_first_frame_per_video <- function(frames_split_dir) {
+  class_dirs <- list.dirs(frames_split_dir, full.names = TRUE, recursive = FALSE)
+  class_dirs <- sort(class_dirs)
+  pairs <- vector("list", 0)
+
+  for (ci in seq_along(class_dirs)) {
+    cdir <- class_dirs[[ci]]
+    vdirs <- list.dirs(cdir, full.names = TRUE, recursive = FALSE)
+    vdirs <- sort(vdirs)
+    lab <- ci - 1L
+    for (vd in vdirs) {
+      jpgs <- sort(Sys.glob(file.path(vd, "*.jpg")))
+      if (!length(jpgs)) jpgs <- sort(Sys.glob(file.path(vd, "*.jpeg")))
+      if (!length(jpgs)) next
+      pairs[[length(pairs) + 1L]] <- list(path = jpgs[[1L]], label = lab)
+    }
+  }
+
+  if (!length(pairs)) {
+    return(data.frame(path = character(), label = integer(), stringsAsFactors = FALSE))
+  }
+
+  paths <- vapply(pairs, `[[`, character(1L), "path")
+  labs <- vapply(pairs, `[[`, integer(1L), "label")
+  data.frame(path = paths, label = labs, stringsAsFactors = FALSE)
+}
+
+train_df <- collect_first_frame_per_video(file.path(frames_root, "train"))
+val_df <- collect_first_frame_per_video(file.path(frames_root, "val"))
+test_df <- collect_first_frame_per_video(file.path(frames_root, "test"))
+
+num_classes <- if (nrow(train_df)) length(unique(train_df$label)) else 0L
+knitr::kable(head(train_df, 5))
+list(
+  n_train = nrow(train_df),
+  n_val = nrow(val_df),
+  n_test = nrow(test_df),
+  num_classes = num_classes
+)
+```
+
+```{r}
+#| label: save-manifests
+sample_manifest_path <- file.path(fig_dir, "r_mirror_sample_manifest.json")
+jsonlite::write_json(
+  list(train = train_df, val = val_df, test = test_df),
+  sample_manifest_path,
+  pretty = TRUE
+)
+basename(sample_manifest_path)
+```

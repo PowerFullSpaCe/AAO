@@ -1,0 +1,3 @@
+Błędna klasyfikacja: zestawiono ścieżki klipów z pliku splits oraz indeksy — porównać z wizualizacją klipu (np. podobne tło między klasami). Szczegóły strukturalne: `l7_json.json` → sample_errors_*.
+
+Łączna liczba klipów w splitach CSV: 1582 (wymaganie L7: min. 50).

@@ -1,0 +1,10 @@
+---
+title: "L2 — filtry obróbki (PDF grupa 3)"
+format: html
+---
+
+Moduł `aaop.lab02_filters`: `l2_filtry.png`, `l2_geometria.png`, `l2_progowanie.png`, `l2_wnioski.txt`.
+
+``` bash
+bash scripts/run_aaop_lab.sh lab02_filters
+```

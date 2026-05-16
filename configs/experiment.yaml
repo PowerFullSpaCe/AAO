@@ -1,0 +1,50 @@
+# UCF-101: podzbiór 12 klas (zrównoważony trening/wideo/klatki)
+seed: 42
+
+# Artefakty i augmentacja BNNR (preset: light=szybciej, standard=bogatszy raport)
+artifacts:
+  use_bnnr_augment: true
+  bnnr_preset: light #ChurchNoise i ProCAM
+
+dataset:
+  name: ucf101
+  root: data/raw/UCF-101
+  # Klasy: sport i codzienne
+  class_names:
+    - Biking
+    - Diving
+    - GolfSwing
+    - HighJump
+    - HorseRiding
+    - PullUps
+    - SkateBoarding
+    - Swing
+    - ThrowDiscus
+    - VolleyballSpiking
+    - WalkingWithDog
+    - WritingOnBoard
+splits:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+frames:
+  jpg_dir: data/processed/frames
+  samples_per_video: 8
+  max_side: 224
+l5_cnn:
+  batch_size: 16
+  epochs: 25
+  lr: 0.001
+l6:
+  train_bbox_epochs: 15
+  bbox_lr: 0.0005
+l7:
+  clip_frames: 16
+  frame_stride: 4
+  batch_size: 4
+  epochs: 12
+  lstm_hidden: 256
+  cnn_backbone: resnet18
+paths:
+  reports_dir: reports
+  models_dir: models

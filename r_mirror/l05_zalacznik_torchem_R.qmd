@@ -1,0 +1,429 @@
+---
+title: "Załącznik (opcjonalny): SmallCNN w pakiecie torch (język R)"
+subtitle: "Nie realizuje automatycznie pełnego wymogu L5 z PDF (augmentacja BNNR jak w Pythonie)"
+format: html
+params:
+  run: false
+---
+
+```{r}
+#| label: gate
+#| include: false
+run_ok <- isTRUE(params$run) || identical(params$run, "true") ||
+  identical(params$run, "TRUE") || identical(as.character(params$run), "1")
+if (!run_ok) knitr::knit_exit()
+```
+
+```{r}
+#| label: deps
+#| warning: false
+#| message: false
+.pkgs <- c("yaml", "jsonlite", "ggplot2", "magick", "torch")
+.miss <- .pkgs[!vapply(.pkgs, requireNamespace, logical(1), quietly = TRUE)]
+if (length(.miss)) {
+  stop("Brak pakietów: ", paste(.miss, collapse = ", "))
+}
+`%||%` <- function(x, y) if (is.null(x) || identical(x, "")) y else x
+
+library(torch)
+library(ggplot2)
+```
+
+Konfiguracja i zbiory (jak w `01_konfiguracja_dane.qmd`):
+
+```{r}
+#| label: config-load
+
+repo_root <- normalizePath("..", mustWork = TRUE)
+cfg <- yaml::read_yaml(file.path(repo_root, "configs", "experiment.yaml"))
+art_root <- Sys.getenv("AAOP_ARTIFACT_ROOT", unset = "")
+base_dir <- if (nzchar(art_root)) normalizePath(art_root, mustWork = FALSE) else repo_root
+
+reports_rel <- cfg$paths$reports_dir %||% "reports"
+models_rel <- cfg$paths$models_dir %||% "models"
+fig_dir <- file.path(base_dir, reports_rel, "figury")
+model_dir <- file.path(base_dir, models_rel)
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(model_dir, recursive = TRUE, showWarnings = FALSE)
+
+frames_root <- file.path(repo_root, cfg$frames$jpg_dir)
+
+collect_first_frame_per_video <- function(frames_split_dir) {
+  class_dirs <- list.dirs(frames_split_dir, full.names = TRUE, recursive = FALSE)
+  class_dirs <- sort(class_dirs)
+  pairs <- vector("list", 0)
+  for (ci in seq_along(class_dirs)) {
+    cdir <- class_dirs[[ci]]
+    vdirs <- list.dirs(cdir, full.names = TRUE, recursive = FALSE)
+    vdirs <- sort(vdirs)
+    lab <- as.integer(ci - 1L)
+    for (vd in vdirs) {
+      jpgs <- sort(Sys.glob(file.path(vd, "*.jpg")))
+      if (!length(jpgs)) jpgs <- sort(Sys.glob(file.path(vd, "*.jpeg")))
+      if (!length(jpgs)) next
+      pairs[[length(pairs) + 1L]] <- list(path = jpgs[[1L]], label = lab)
+    }
+  }
+  if (!length(pairs)) {
+    return(data.frame(path = character(), label = integer(), stringsAsFactors = FALSE))
+  }
+  paths <- vapply(pairs, `[[`, character(1L), "path")
+  labs <- vapply(pairs, `[[`, integer(1L), "label")
+  data.frame(path = paths, label = labs, stringsAsFactors = FALSE)
+}
+
+train_df <- collect_first_frame_per_video(file.path(frames_root, "train"))
+val_df <- collect_first_frame_per_video(file.path(frames_root, "val"))
+test_df <- collect_first_frame_per_video(file.path(frames_root, "test"))
+
+num_classes <- length(unique(train_df$label))
+
+set.seed(as.integer(cfg$seed %||% 42L))
+torch_manual_seed(as.integer(cfg$seed %||% 42L))
+
+batch_size <- as.integer(cfg$l5_cnn$batch_size %||% 16L)
+epochs <- as.integer(cfg$l5_cnn$epochs %||% 15L)
+lr <- as.numeric(cfg$l5_cnn$lr %||% 1e-3)
+
+if (num_classes < 2L || !nrow(train_df)) {
+  stop("Za mało klas lub brak JPEG — przygotuj dane (`extract_frames`).")
+}
+device <- if (cuda_is_available()) torch_device("cuda") else torch_device("cpu")
+
+list(
+  num_classes = num_classes,
+  n_train = nrow(train_df),
+  n_val = nrow(val_df),
+  n_test = nrow(test_df),
+  device = paste(device),
+  batch_size = batch_size,
+  epochs = epochs
+)
+```
+
+Ładowanie obrazu i normalizacja ImageNet (jak `torchvision` w Pythonie):
+
+```{r}
+#| label: image-loader
+
+load_batch_tensors <- function(df, train, batch_rows) {
+  xs <- vector("list", nrow(batch_rows))
+
+  mean_cpu <- torch_tensor(c(0.485, 0.456, 0.406), dtype = torch_float32())$view(c(3L, 1L, 1L))
+  std_cpu <- torch_tensor(c(0.229, 0.224, 0.225), dtype = torch_float32())$view(c(3L, 1L, 1L))
+
+  for (i in seq_len(nrow(batch_rows))) {
+    path <- batch_rows$path[[i]]
+
+    img <- magick::image_read(path)
+    img <- magick::image_resize(img, "224x224!")
+    arr <- magick::image_data(img, channels = "rgb")
+
+    xt <- torch_tensor(as.numeric(arr) / 255, dtype = torch_float32())$
+      reshape(c(3L, dim(arr)[2], dim(arr)[3]))
+    xt <- torch_transpose(xt, 2L, 3L)
+
+    if (isTRUE(train) && stats::runif(1L) < 0.5) {
+      xt <- torch_flip(xt, 3L)
+    }
+
+    xt <- (xt - mean_cpu) / std_cpu
+    xs[[i]] <- xt
+  }
+
+  x <- torch_stack(xs, dim = 1L)$to(device = device)
+  y <- torch_tensor(batch_rows$label, dtype = torch_long(), device = device)
+  list(x = x, y = y)
+}
+
+batch_iterate <- function(df, train, batch_size, shuffle) {
+  n <- nrow(df)
+  if (!n) {
+    return(NULL)
+  }
+  ord <- if (shuffle) sample.int(n) else seq_len(n)
+  starts <- seq(1L, n, by = batch_size)
+  lapply(starts, function(s) {
+    idx <- ord[seq(s, min(s + batch_size - 1L, n))]
+    load_batch_tensors(df, train, df[idx, , drop = FALSE])
+  })
+}
+```
+
+Architektura zgodna z `SmallCNN` w Pythonie:
+
+```{r}
+#| label: model-def
+
+SmallCNN <- nn_module(
+  initialize = function(num_classes, dropout = 0.3) {
+    self$c1 <- nn_conv2d(3L, 32L, 3L, padding = 1L)
+    self$bn1 <- nn_batch_norm2d(32L)
+    self$c2 <- nn_conv2d(32L, 64L, 3L, padding = 1L)
+    self$bn2 <- nn_batch_norm2d(64L)
+    self$c3 <- nn_conv2d(64L, 128L, 3L, padding = 1L)
+    self$bn3 <- nn_batch_norm2d(128L)
+    self$pool <- nn_max_pool2d(2L)
+    self$gap <- nn_adaptive_avg_pool2d(c(1L, 1L))
+    self$drop <- nn_dropout(dropout)
+    self$fc <- nn_linear(128L, num_classes)
+  },
+  forward = function(x) {
+    x <- nnf_relu(self$bn1(self$c1(x)))
+    x <- self$pool(x)
+    x <- nnf_relu(self$bn2(self$c2(x)))
+    x <- self$pool(x)
+    x <- nnf_relu(self$bn3(self$c3(x)))
+    x <- self$pool(x)
+    x <- self$gap(x)
+    x <- torch_flatten(x, start_dim = 2L)
+    x <- self$drop(x)
+    self$fc(x)
+  }
+)
+
+model <- SmallCNN(num_classes, dropout = 0.3)
+model <- model$to(device = device)
+
+optimizer <- optim_adam(model$parameters(), lr = lr)
+
+model
+```
+
+Pętla epok + **walidacja** (średnia strata i dokładność na `val`), potem predykcja na **test**:
+
+```{r}
+#| label: train-loop
+
+epoch_metrics <- function(batches, train_mode) {
+  if (train_mode) {
+    model$train()
+  } else {
+    model$eval()
+  }
+  loss_sum <- 0
+  n <- 0L
+  correct <- 0L
+
+  coro <- function() {
+    for (b in batches) {
+      x <- b$x
+      y <- b$y
+      out <- model(x)
+      loss <- nnf_cross_entropy(out, y)
+      if (train_mode) {
+        optimizer$zero_grad()
+        loss$backward()
+        optimizer$step()
+      }
+      bs <- x$shape[[1]]
+      loss_sum <<- loss_sum + as.numeric(loss) * bs
+      n <<- n + bs
+      pred <- torch_argmax(out, dim = 2L)
+      correct <<- correct + as.numeric(torch_sum(pred == y)$item())
+    }
+  }
+
+  if (train_mode) {
+    coro()
+  } else {
+    with_no_grad({
+      coro()
+    })
+  }
+
+  list(loss = loss_sum / max(n, 1L), acc = correct / max(n, 1L))
+}
+
+history <- list(
+  train_loss = numeric(epochs),
+  val_loss = numeric(epochs),
+  train_acc = numeric(epochs),
+  val_acc = numeric(epochs)
+)
+
+for (ep in seq_len(epochs)) {
+  tr_batches <- batch_iterate(train_df, TRUE, batch_size, TRUE)
+  va_batches <- batch_iterate(val_df, FALSE, batch_size, FALSE)
+
+  tr <- epoch_metrics(tr_batches, TRUE)
+  va <- epoch_metrics(va_batches, FALSE)
+
+  history$train_loss[[ep]] <- tr$loss
+  history$val_loss[[ep]] <- va$loss
+  history$train_acc[[ep]] <- tr$acc
+  history$val_acc[[ep]] <- va$acc
+
+  if (ep == 1L || ep %% 5L == 0L) {
+    message(sprintf(
+      "ep %d/%d tr_loss %.4f val_loss %.4f tr_acc %.3f val_acc %.3f",
+      ep, epochs, tr$loss, va$loss, tr$acc, va$acc
+    ))
+  }
+}
+```
+
+```{r}
+#| label: save-model
+
+r_model_path <- file.path(model_dir, "l5_smallcnn_r_mirror.pt")
+torch_save(model, r_model_path)
+basename(r_model_path)
+```
+
+```{r}
+#| label: test-predict
+
+predict_df <- function(df) {
+  model$eval()
+  y_true <- integer()
+  y_pred <- integer()
+  te_batches <- batch_iterate(df, FALSE, batch_size, FALSE)
+  with_no_grad({
+    for (b in te_batches) {
+      out <- model(b$x)
+      pred <- torch_argmax(out, dim = 2L)$to(device = "cpu")
+      y_cpu <- b$y$to(device = "cpu")
+      y_true <- c(y_true, as.integer(as.numeric(y_cpu)))
+      y_pred <- c(y_pred, as.integer(as.numeric(pred)))
+    }
+  })
+  list(y_true = y_true, y_pred = y_pred)
+}
+
+te <- predict_df(test_df)
+y_true <- te$y_true
+y_pred <- te$y_pred
+
+accuracy <- mean(y_true == y_pred)
+
+macro_prf <- function(y_true, y_pred, K) {
+  pr <- numeric(K)
+  re <- numeric(K)
+  f1 <- numeric(K)
+  for (k in seq_len(K)) {
+    kk <- k - 1L
+    tp <- sum(y_true == kk & y_pred == kk)
+    fp <- sum(y_true != kk & y_pred == kk)
+    fn <- sum(y_true == kk & y_pred != kk)
+    pr[k] <- tp / max(tp + fp, 1L)
+    re[k] <- tp / max(tp + fn, 1L)
+    f1[k] <- if (pr[k] + re[k] > 0) 2 * pr[k] * re[k] / (pr[k] + re[k]) else 0
+  }
+  list(
+    precision_macro = mean(pr),
+    recall_macro = mean(re),
+    f1_macro = mean(f1)
+  )
+}
+
+prf <- macro_prf(y_true, y_pred, num_classes)
+cm <- table(factor(y_true, levels = seq(0L, num_classes - 1L)),
+            factor(y_pred, levels = seq(0L, num_classes - 1L)))
+
+list(accuracy = accuracy, prf = prf)
+```
+
+Wykresy i pliki wyjściowe (nazwy z sufiksem `_r_mirror`, żeby nie nadpisać artefaktów Pythona):
+
+```{r}
+#| label: plots
+
+dfh <- data.frame(
+  epoch = seq_len(epochs),
+  train_loss = history$train_loss,
+  val_loss = history$val_loss,
+  train_acc = history$train_acc,
+  val_acc = history$val_acc
+)
+
+p_loss <- ggplot(dfh, aes(x = epoch)) +
+  geom_line(aes(y = train_loss, color = "train")) +
+  geom_line(aes(y = val_loss, color = "val")) +
+  labs(title = "L5 (R): loss", y = "loss", color = "") +
+  theme_minimal()
+
+p_acc <- ggplot(dfh, aes(x = epoch)) +
+  geom_line(aes(y = train_acc, color = "train")) +
+  geom_line(aes(y = val_acc, color = "val")) +
+  labs(title = "L5 (R): accuracy", y = "acc", color = "") +
+  ylim(0, 1) +
+  theme_minimal()
+
+ggsave(file.path(fig_dir, "l5_curves_loss_r_mirror.png"), p_loss, width = 8, height = 4, dpi = 150)
+ggsave(file.path(fig_dir, "l5_curves_acc_r_mirror.png"), p_acc, width = 8, height = 4, dpi = 150)
+
+cm_df <- as.data.frame(cm, stringsAsFactors = FALSE)
+colnames(cm_df) <- c("true_label", "pred_label", "Freq")
+
+p_cm <- ggplot(cm_df, aes(x = pred_label, y = true_label, fill = Freq)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "#2c7fb8") +
+  labs(title = "L5 (R): macierz pomyłek (test)", x = "pred", y = "true") +
+  theme_minimal() +
+  coord_fixed()
+
+ggsave(file.path(fig_dir, "l5_confusion_r_mirror.png"), p_cm, width = 8, height = 6, dpi = 150)
+
+write.csv(dfh, file.path(fig_dir, "l5_history_r_mirror.csv"), row.names = FALSE)
+
+metrics_out <- list(
+  accuracy = accuracy,
+  precision_macro = prf$precision_macro,
+  recall_macro = prf$recall_macro,
+  f1_macro = prf$f1_macro,
+  epochs = epochs,
+  device = paste(device),
+  pipeline = "r_mirror_quarto"
+)
+jsonlite::write_json(
+  metrics_out,
+  file.path(fig_dir, "l5_metrics_r_mirror.json"),
+  pretty = TRUE,
+  auto_unbox = TRUE
+)
+
+class_names <- cfg$dataset$class_names
+if (length(class_names) < num_classes) {
+  class_names <- paste0("class_", seq_len(num_classes) - 1L)
+} else {
+  class_names <- class_names[seq_len(num_classes)]
+}
+
+per_class <- lapply(seq_len(num_classes), function(k) {
+  kk <- k - 1L
+  tp <- sum(y_true == kk & y_pred == kk)
+  fp <- sum(y_true != kk & y_pred == kk)
+  fn <- sum(y_true == kk & y_pred != kk)
+  prec <- tp / max(tp + fp, 1L)
+  rec <- tp / max(tp + fn, 1L)
+  f1 <- if (prec + rec > 0) 2 * prec * rec / (prec + rec) else 0
+  list(precision = prec, recall = rec, `f1-score` = f1, support = sum(y_true == kk))
+})
+names(per_class) <- class_names
+
+report <- c(
+  list(
+    accuracy = accuracy,
+    `macro avg` = list(
+      precision = prf$precision_macro,
+      recall = prf$recall_macro,
+      `f1-score` = prf$f1_macro
+    )
+  ),
+  per_class
+)
+jsonlite::write_json(
+  report,
+  file.path(fig_dir, "l5_classification_report_r_mirror.json"),
+  pretty = TRUE,
+  auto_unbox = TRUE
+)
+
+basename(fig_dir)
+```
+
+Podsumowanie zapisów w `reports/.../figury/` i modelu PyTorch-compatible (obiekt sieci zapisywany przez `torch_save` pakietu `torch` w R):
+
+- `l5_smallcnn_r_mirror.pt`
+- `l5_*_r_mirror.*` (PNG, CSV, JSON)

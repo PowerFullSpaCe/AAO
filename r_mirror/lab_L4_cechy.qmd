@@ -1,0 +1,10 @@
+---
+title: "L4 — HOG, LBP, redukcja wymiarów, klasyfikatory (PDF grupa 3)"
+format: html
+---
+
+Wymóg PDF: SVM i k-NN na różnych zestawach cech (`l4_porownanie.csv`, ryciny PCA/t-SNE).
+
+``` bash
+bash scripts/run_aaop_lab.sh lab04_features
+```

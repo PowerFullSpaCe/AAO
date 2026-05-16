@@ -1,0 +1,10 @@
+---
+title: "L6 — optymalizacja CNN (PDF grupa 3)"
+format: html
+---
+
+Porównanie architektur, regularyzacja, LR, transfer learning, Grad-CAM, bbox + IoU (`lab06_optimization`).
+
+``` bash
+bash scripts/run_aaop_lab.sh lab06_optimization
+```

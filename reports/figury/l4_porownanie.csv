@@ -1,0 +1,7 @@
+feature_set,classifier,accuracy_test
+hog_only,SVM_RBF,0.9333333333333333
+hog_only,kNN_k5,0.8555555555555555
+lbp_only,SVM_RBF,0.9
+lbp_only,kNN_k5,0.8777777777777778
+hog_lbp,SVM_RBF,0.9333333333333333
+hog_lbp,kNN_k5,0.8666666666666667
